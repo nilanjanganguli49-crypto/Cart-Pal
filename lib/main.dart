@@ -1,0 +1,105 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+import './list_provider.dart';
+import './screens/shopping_lists_screen.dart';
+import './screens/shopping_list_screen.dart';
+
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => ListProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
+}
+
+final GoRouter _router = GoRouter(
+  routes: <RouteBase>[
+    GoRoute(
+      path: '/',
+      builder: (BuildContext context, GoRouterState state) {
+        return const ShoppingListsScreen();
+      },
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'list/:listIndex',
+          builder: (BuildContext context, GoRouterState state) {
+            final int listIndex = int.parse(state.pathParameters['listIndex']!);
+            return ShoppingListScreen(listIndex: listIndex);
+          },
+        ),
+      ],
+    ),
+  ],
+);
+
+class ThemeProvider with ChangeNotifier {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  ThemeMode get themeMode => _themeMode;
+
+  void toggleTheme() {
+    _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
+  }
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const Color primarySeedColor = Colors.blue;
+
+    final TextTheme appTextTheme = TextTheme(
+      displayLarge: GoogleFonts.lato(fontSize: 57, fontWeight: FontWeight.bold),
+      titleLarge: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w500),
+      bodyMedium: GoogleFonts.lato(fontSize: 14),
+    );
+
+    final ThemeData lightTheme = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primarySeedColor,
+        brightness: Brightness.light,
+      ),
+      textTheme: appTextTheme,
+      appBarTheme: AppBarTheme(
+        backgroundColor: primarySeedColor,
+        foregroundColor: Colors.white,
+        titleTextStyle: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold),
+      ),
+    );
+
+    final ThemeData darkTheme = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primarySeedColor,
+        brightness: Brightness.dark,
+      ),
+      textTheme: appTextTheme,
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.grey[900],
+        foregroundColor: Colors.white,
+        titleTextStyle: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold),
+      ),
+    );
+
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp.router(
+          routerConfig: _router,
+          title: 'CartPal',
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: themeProvider.themeMode,
+        );
+      },
+    );
+  }
+}
