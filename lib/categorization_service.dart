@@ -1,7 +1,25 @@
 class CategorizationService {
   static final Map<String, List<String>> _categoryKeywords = {
-    'Fruits': ['apple', 'banana', 'orange', 'grapes', 'strawberry', 'blueberry', 'mango', 'pineapple'],
-    'Vegetables': ['carrot', 'broccoli', 'spinach', 'potato', 'tomato', 'onion', 'garlic', 'lettuce'],
+    'Fruits': [
+      'apple',
+      'banana',
+      'orange',
+      'grapes',
+      'strawberry',
+      'blueberry',
+      'mango',
+      'pineapple',
+    ],
+    'Vegetables': [
+      'carrot',
+      'broccoli',
+      'spinach',
+      'potato',
+      'tomato',
+      'onion',
+      'garlic',
+      'lettuce',
+    ],
     'Dairy': ['milk', 'cheese', 'yogurt', 'butter', 'cream'],
     'Meat': ['chicken', 'beef', 'pork', 'lamb', 'fish', 'salmon'],
     'Bakery': ['bread', 'bagel', 'croissant', 'muffin'],

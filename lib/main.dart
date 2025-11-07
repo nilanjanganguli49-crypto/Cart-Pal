@@ -47,7 +47,9 @@ class ThemeProvider with ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
 
   void toggleTheme() {
-    _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    _themeMode = _themeMode == ThemeMode.light
+        ? ThemeMode.dark
+        : ThemeMode.light;
     notifyListeners();
   }
 }
@@ -89,7 +91,10 @@ class _MyAppState extends State<MyApp> {
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.lightBlue[100],
         foregroundColor: Colors.black,
-        titleTextStyle: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold),
+        titleTextStyle: GoogleFonts.lato(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
 
@@ -103,7 +108,10 @@ class _MyAppState extends State<MyApp> {
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.grey[900],
         foregroundColor: Colors.white,
-        titleTextStyle: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold),
+        titleTextStyle: GoogleFonts.lato(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
 

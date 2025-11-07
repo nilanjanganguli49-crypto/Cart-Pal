@@ -37,4 +37,15 @@ class ListProvider with ChangeNotifier {
     item.color = newColor;
     notifyListeners();
   }
+
+  void updateItemPrice(ShoppingList list, ShoppingItem item, double newPrice) {
+    item.price = newPrice;
+    notifyListeners();
+  }
+
+  double getTotalCost(ShoppingList list) {
+    return list.items
+        .where((item) => item.isChecked)
+        .fold(0.0, (sum, item) => sum + item.price);
+  }
 }

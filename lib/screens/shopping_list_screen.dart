@@ -22,69 +22,152 @@ class ShoppingListScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(shoppingList.name),
-      ),
-      body: ListView.builder(
-        itemCount: itemsByCategory.length,
-        itemBuilder: (context, index) {
-          final category = itemsByCategory.keys.elementAt(index);
-          final items = itemsByCategory[category]!;
-          return ExpansionTile(
-            title: Text(category, style: const TextStyle(fontWeight: FontWeight.bold)),
-            children: items.map((item) {
-              return ListTile(
-                tileColor: item.color,
-                title: Text(item.name, style: TextStyle(decoration: item.isChecked ? TextDecoration.lineThrough : null)),
-                leading: Checkbox(
-                  value: item.isChecked,
-                  onChanged: (value) {
-                    listProvider.toggleItem(shoppingList, item);
-                  },
+      appBar: AppBar(title: Text(shoppingList.name)),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: itemsByCategory.length,
+              itemBuilder: (context, index) {
+                final category = itemsByCategory.keys.elementAt(index);
+                final items = itemsByCategory[category]!;
+                return ExpansionTile(
+                  title: Text(
+                    category,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  children: items.map((item) {
+                    final priceController = TextEditingController(
+                      text: item.price > 0 ? item.price.toStringAsFixed(2) : '',
+                    );
+                    return ListTile(
+                      tileColor: item.color,
+                      title: Text(
+                        item.name,
+                        style: TextStyle(
+                          decoration: item.isChecked
+                              ? TextDecoration.lineThrough
+                              : null,
+                        ),
+                      ),
+                      leading: Checkbox(
+                        value: item.isChecked,
+                        onChanged: (value) {
+                          listProvider.toggleItem(shoppingList, item);
+                        },
+                      ),
+                      trailing: SizedBox(
+                        width: 200, // Adjust width as needed
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            if (item.isChecked)
+                              SizedBox(
+                                width: 80,
+                                child: TextField(
+                                  controller: priceController,
+                                  keyboardType: TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
+                                  decoration: InputDecoration(
+                                    hintText: 'Price',
+                                    prefixText: '₹',
+                                  ),
+                                  onChanged: (value) {
+                                    final price = double.tryParse(value);
+                                    if (price != null) {
+                                      listProvider.updateItemPrice(
+                                        shoppingList,
+                                        item,
+                                        price,
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
+                            DropdownButton<Color>(
+                              value: item.color,
+                              onChanged: (Color? newColor) {
+                                if (newColor != null) {
+                                  listProvider.updateItemColor(
+                                    shoppingList,
+                                    item,
+                                    newColor,
+                                  );
+                                }
+                              },
+                              items:
+                                  [
+                                    Colors.transparent,
+                                    Colors.blue,
+                                    Colors.green,
+                                    Colors.yellow,
+                                    Colors.red,
+                                  ].map<DropdownMenuItem<Color>>((Color color) {
+                                    return DropdownMenuItem<Color>(
+                                      value: color,
+                                      child: Container(
+                                        width: 20,
+                                        height: 20,
+                                        color: color,
+                                      ),
+                                    );
+                                  }).toList(),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                listProvider.removeItem(shoppingList, item);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 12.0,
+            ),
+            margin: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.lightGreen[100],
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Total Cost:',
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    DropdownButton<Color>(
-                      value: item.color,
-                      onChanged: (Color? newColor) {
-                        if (newColor != null) {
-                          listProvider.updateItemColor(shoppingList, item, newColor);
-                        }
-                      },
-                      items: [Colors.transparent, Colors.blue, Colors.green, Colors.yellow, Colors.red]
-                          .map<DropdownMenuItem<Color>>((Color color) {
-                        return DropdownMenuItem<Color>(
-                          value: color,
-                          child: Container(
-                            width: 20,
-                            height: 20,
-                            color: color,
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        listProvider.removeItem(shoppingList, item);
-                      },
-                    ),
-                  ],
+                Text(
+                  '₹${listProvider.getTotalCost(shoppingList).toStringAsFixed(2)}',
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-              );
-            }).toList(),
-          );
-        },
+              ],
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddItemDialog(context, listProvider, shoppingList),
+        onPressed: () =>
+            _showAddItemDialog(context, listProvider, shoppingList),
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  void _showAddItemDialog(BuildContext context, ListProvider listProvider, ShoppingList shoppingList) {
+  void _showAddItemDialog(
+    BuildContext context,
+    ListProvider listProvider,
+    ShoppingList shoppingList,
+  ) {
     final TextEditingController controller = TextEditingController();
     showDialog(
       context: context,
@@ -103,7 +186,10 @@ class ShoppingListScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 if (controller.text.isNotEmpty) {
-                  listProvider.addItem(shoppingList, ShoppingItem(name: controller.text));
+                  listProvider.addItem(
+                    shoppingList,
+                    ShoppingItem(name: controller.text),
+                  );
                   Navigator.of(context).pop();
                 }
               },
