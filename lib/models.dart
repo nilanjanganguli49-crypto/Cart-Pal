@@ -1,15 +1,18 @@
+import 'package:flutter/material.dart';
 
 class ShoppingItem {
   String name;
   String quantity;
   String category;
   bool isChecked;
+  Color color;
 
   ShoppingItem({
     required this.name,
     this.quantity = '1',
     this.category = 'Uncategorized',
     this.isChecked = false,
+    this.color = Colors.transparent,
   });
 }
 

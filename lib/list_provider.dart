@@ -32,4 +32,9 @@ class ListProvider with ChangeNotifier {
     item.isChecked = !item.isChecked;
     notifyListeners();
   }
+
+  void updateItemColor(ShoppingList list, ShoppingItem item, Color newColor) {
+    item.color = newColor;
+    notifyListeners();
+  }
 }

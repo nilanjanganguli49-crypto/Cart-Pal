@@ -42,7 +42,7 @@ final GoRouter _router = GoRouter(
 );
 
 class ThemeProvider with ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.system;
+  ThemeMode _themeMode = ThemeMode.light;
 
   ThemeMode get themeMode => _themeMode;
 
@@ -71,7 +71,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    const Color primarySeedColor = Colors.blue;
+    const Color primarySeedColor = Colors.white;
 
     final TextTheme appTextTheme = TextTheme(
       displayLarge: GoogleFonts.lato(fontSize: 57, fontWeight: FontWeight.bold),
@@ -87,8 +87,8 @@ class _MyAppState extends State<MyApp> {
       ),
       textTheme: appTextTheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: primarySeedColor,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.lightBlue[100],
+        foregroundColor: Colors.black,
         titleTextStyle: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold),
       ),
     );

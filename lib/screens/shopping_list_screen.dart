@@ -34,6 +34,7 @@ class ShoppingListScreen extends StatelessWidget {
             title: Text(category, style: const TextStyle(fontWeight: FontWeight.bold)),
             children: items.map((item) {
               return ListTile(
+                tileColor: item.color,
                 title: Text(item.name, style: TextStyle(decoration: item.isChecked ? TextDecoration.lineThrough : null)),
                 leading: Checkbox(
                   value: item.isChecked,
@@ -41,11 +42,35 @@ class ShoppingListScreen extends StatelessWidget {
                     listProvider.toggleItem(shoppingList, item);
                   },
                 ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    listProvider.removeItem(shoppingList, item);
-                  },
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    DropdownButton<Color>(
+                      value: item.color,
+                      onChanged: (Color? newColor) {
+                        if (newColor != null) {
+                          listProvider.updateItemColor(shoppingList, item, newColor);
+                        }
+                      },
+                      items: [Colors.transparent, Colors.blue, Colors.green, Colors.yellow, Colors.red]
+                          .map<DropdownMenuItem<Color>>((Color color) {
+                        return DropdownMenuItem<Color>(
+                          value: color,
+                          child: Container(
+                            width: 20,
+                            height: 20,
+                            color: color,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        listProvider.removeItem(shoppingList, item);
+                      },
+                    ),
+                  ],
                 ),
               );
             }).toList(),
