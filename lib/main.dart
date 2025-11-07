@@ -3,12 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import './list_provider.dart';
 import './screens/shopping_lists_screen.dart';
 import './screens/shopping_list_screen.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(
     MultiProvider(
@@ -33,7 +35,7 @@ final GoRouter _router = GoRouter(
           path: 'list/:listIndex',
           builder: (BuildContext context, GoRouterState state) {
             final int listIndex = int.parse(state.pathParameters['listIndex']!);
-            return ShoppingListScreen(listIndex: listIndex);
+            return ShoppingListScreen(listIndex: listIndex, listId: '',);
           },
         ),
       ],

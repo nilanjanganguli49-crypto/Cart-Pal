@@ -1,26 +1,24 @@
-import 'package:flutter/material.dart';
 
 class ShoppingItem {
+  final String id;
   String name;
-  String quantity;
   String category;
-  bool isChecked;
-  Color color;
+  bool isBought;
   double price;
 
   ShoppingItem({
+    required this.id,
     required this.name,
-    this.quantity = '1',
     this.category = 'Uncategorized',
-    this.isChecked = false,
-    this.color = Colors.transparent,
+    this.isBought = false,
     this.price = 0.0,
   });
 }
 
 class ShoppingList {
+  final String id;
   String name;
   List<ShoppingItem> items;
 
-  ShoppingList({required this.name, required this.items});
+  ShoppingList({required this.id, required this.name, required this.items});
 }

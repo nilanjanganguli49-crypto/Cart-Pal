@@ -1,51 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import './models.dart';
 import './categorization_service.dart';
 
 class ListProvider with ChangeNotifier {
-  final List<ShoppingList> _shoppingLists = [];
+  final Map<String, ShoppingList> _shoppingLists = {};
+  final Uuid _uuid = const Uuid();
 
-  List<ShoppingList> get shoppingLists => _shoppingLists;
+  Map<String, ShoppingList> get shoppingLists => _shoppingLists;
 
-  void addList(ShoppingList list) {
-    _shoppingLists.add(list);
+  ShoppingList getlistById(String id) {
+    return _shoppingLists[id]!;
+  }
+
+  void addList(String name) {
+    final id = _uuid.v4();
+    _shoppingLists[id] = ShoppingList(id: id, name: name, items: []);
     notifyListeners();
   }
 
-  void removeList(ShoppingList list) {
-    _shoppingLists.remove(list);
+  void removeList(String listId) {
+    _shoppingLists.remove(listId);
     notifyListeners();
   }
 
-  void addItem(ShoppingList list, ShoppingItem item) {
-    item.category = CategorizationService.categorize(item.name);
-    list.items.add(item);
+  void addItem(String listId, String itemName) {
+    final item = ShoppingItem(
+      id: _uuid.v4(),
+      name: itemName,
+      category: CategorizationService.categorize(itemName),
+    );
+    _shoppingLists[listId]?.items.add(item);
     notifyListeners();
   }
 
-  void removeItem(ShoppingList list, ShoppingItem item) {
-    list.items.remove(item);
+  void removeItem(String listId, String itemId) {
+    _shoppingLists[listId]?.items.removeWhere((item) => item.id == itemId);
     notifyListeners();
   }
 
-  void toggleItem(ShoppingList list, ShoppingItem item) {
-    item.isChecked = !item.isChecked;
-    notifyListeners();
+  void toggleItemBought(String listId, String itemId, bool isBought) {
+    final list = _shoppingLists[listId];
+    if (list != null) {
+      final item = list.items.firstWhere((item) => item.id == itemId);
+      item.isBought = isBought;
+      notifyListeners();
+    }
   }
 
-  void updateItemColor(ShoppingList list, ShoppingItem item, Color newColor) {
-    item.color = newColor;
-    notifyListeners();
+  void updateItemName(String listId, String itemId, String newName) {
+    final list = _shoppingLists[listId];
+    if (list != null) {
+      final item = list.items.firstWhere((item) => item.id == itemId);
+      item.name = newName;
+      item.category = CategorizationService.categorize(newName);
+      notifyListeners();
+    }
   }
 
-  void updateItemPrice(ShoppingList list, ShoppingItem item, double newPrice) {
-    item.price = newPrice;
-    notifyListeners();
+  void updateItemPrice(String listId, String itemId, double newPrice) {
+    final list = _shoppingLists[listId];
+    if (list != null) {
+      final item = list.items.firstWhere((item) => item.id == itemId);
+      item.price = newPrice;
+      notifyListeners();
+    }
   }
 
-  double getTotalCost(ShoppingList list) {
+  double getTotalCost(String listId) {
+    final list = _shoppingLists[listId];
+    if (list == null) return 0.0;
     return list.items
-        .where((item) => item.isChecked)
+        .where((item) => item.isBought)
         .fold(0.0, (sum, item) => sum + item.price);
   }
 }
