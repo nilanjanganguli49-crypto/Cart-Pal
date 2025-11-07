@@ -12,7 +12,9 @@ class ShoppingListsScreen extends StatelessWidget {
     final listProvider = Provider.of<ListProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Your Shopping Lists')),
+      appBar: AppBar(
+        title: const Text('Your Shopping Lists'),
+      ),
       body: ListView.builder(
         itemCount: listProvider.shoppingLists.length,
         itemBuilder: (context, index) {
@@ -33,6 +35,7 @@ class ShoppingListsScreen extends StatelessWidget {
         onPressed: () => _showAddListDialog(context, listProvider),
         child: const Icon(Icons.add),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 

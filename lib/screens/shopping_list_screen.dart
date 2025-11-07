@@ -22,7 +22,9 @@ class ShoppingListScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(shoppingList.name)),
+      appBar: AppBar(
+        title: Text(shoppingList.name),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -85,6 +87,12 @@ class ShoppingListScreen extends StatelessWidget {
                                   },
                                 ),
                               ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                listProvider.removeItem(shoppingList, item);
+                              },
+                            ),
                             DropdownButton<Color>(
                               value: item.color,
                               onChanged: (Color? newColor) {
@@ -113,12 +121,6 @@ class ShoppingListScreen extends StatelessWidget {
                                       ),
                                     );
                                   }).toList(),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                listProvider.removeItem(shoppingList, item);
-                              },
                             ),
                           ],
                         ),
@@ -160,6 +162,7 @@ class ShoppingListScreen extends StatelessWidget {
             _showAddItemDialog(context, listProvider, shoppingList),
         child: const Icon(Icons.add),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 
